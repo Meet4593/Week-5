@@ -1,33 +1,56 @@
-const express = require("express");
-const fs = require("fs");
-const app = express();
+import express from 'express';
+
 const port = 3000;
-const users = require("./MOCK_DATA.json");
+const app = express();
 
-app.use(express.json()); // it is collect you data from the buffer and convert it to json object
+let products = [
+    {
+        id: 1,
+        name: "Phone",
+        category: "electronics"
+    },
+    {
+        id: 2,
+        name: "Headset",
+        category: "electronics"
+    }, 
+    {
+        id: 3,
+        name: "medicine",
+        category: "healthcare"
+    },
+    {
+        id: 4,
+        name: "Laptop",
+        category: "electronics"
+    },
+    {
+        id: 5,
+        name: "First Aid Kit",
+        category: "healthcare"
+    }
+];
 
-app.get("/users", (req, res) => {  //get all product
-  res.json(users);
+app.get('/', (req, res) => {
+    res.send("Welcome to E-commerce Platform");
 });
 
-app.get("/users/:id", (req, res) => {    //get product by id
-  const user = users.find(u => u.id === parseInt(req.params.id));
-  if (!user) return res.status(404).json({ message: "User not found" });{}
-  res.json(user);
+app.get('/products', (req, res) => {
+    const { category } = req.query;
+    let data;
+    if (category) {
+        data = products.filter((product) => product.category == category);
+    } else {
+        data = products;
+    }
+    res.json(data);
 });
 
-app.get("/users/category/:category", (req, res) => {    //get product by it's category
-  const category = req.params.category;
-  
-  const matchedUsers = users.filter(u => u.category.toLowerCase() === category.toLowerCase());
-  
-  if (matchedUsers.length === 0) {
-    return res.status(404).json({ message: "User not found" });
-  }
-  
-  res.json(matchedUsers);
+app.get('/products/:id', (req, res) => {
+    const data = products.filter((product) => product.id == req.params.id);
+    res.json(data);
 });
 
 app.listen(port, () => {
-  console.log(`API running at http://localhost:${port}/users`);
+    console.log(`Go to: http://127.0.0.1:${port}/`);
 });
